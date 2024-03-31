@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jogo da Velha</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+    #game-container {
+        text-align: center;
+    }
+    #board {
+        display: grid;
+        grid-template-columns: repeat(3, 100px);
+        grid-template-rows: repeat(3, 100px);
+        gap: 2px;
+        margin: 20px auto;
+    }
+    .cell {
+        background-color: #ccc;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 40px;
+        cursor: pointer;
+    }
+    .cell:hover {
+        background-color: #ddd;
+    }
+    #score {
+        margin-top: 20px;
+    }
+</style>
+</head>
+<body>
+<div id="game-container">
+    <div id="board">
+        <div class="cell" onclick="handleClick(0, 0)"></div>
+        <div class="cell" onclick="handleClick(0, 1)"></div>
+        <div class="cell" onclick="handleClick(0, 2)"></div>
+        <div class="cell" onclick="handleClick(1, 0)"></div>
+        <div class="cell" onclick="handleClick(1, 1)"></div>
+        <div class="cell" onclick="handleClick(1, 2)"></div>
+        <div class="cell" onclick="handleClick(2, 0)"></div>
+        <div class="cell" onclick="handleClick(2, 1)"></div>
+        <div class="cell" onclick="handleClick(2, 2)"></div>
+    </div>
+    <div id="score">
+        <p>Placar:</p>
+        <p>Jogador X: <span id="player-x-score">0</span></p>
+        <p>Jogador O: <span id="player-o-score">0</span></p>
+    </div>
+</div>
+
+<script>
+    let currentPlayer = 'X';
+    let gameBoard = [
+        ['', '', ''],
+        ['', '', ''],
+        ['', '', '']
+    ];
+    let playerXScore = 0;
+    let playerOScore = 0;
+
+    function handleClick(row, col) {
+        if (gameBoard[row][col] === '') {
+            gameBoard[row][col] = currentPlayer;
+            render();
+            if (checkWinner()) {
+                updateScore();
+                resetBoard();
+            } else if (checkDraw()) {
+                resetBoard();
+            } else {
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            }
+        }
+    }
+
+    function checkWinner() {
+        for (let i = 0; i < 3; i++) {
+            if (gameBoard[i][0] !== '' && gameBoard[i][0] === gameBoard[i][1] && gameBoard[i][1] === gameBoard[i][2]) {
+                return true;
+            }
+            if (gameBoard[0][i] !== '' && gameBoard[0][i] === gameBoard[1][i] && gameBoard[1][i] === gameBoard[2][i]) {
+                return true;
+            }
+        }
+        if (gameBoard[0][0] !== '' && gameBoard[0][0] === gameBoard[1][1] && gameBoard[1][1] === gameBoard[2][2]) {
+            return true;
+        }
+        if (gameBoard[0][2] !== '' && gameBoard[0][2] === gameBoard[1][1] && gameBoard[1][1] === gameBoard[2][0]) {
+            return true;
+        }
+        return false;
+    }
+
+    function checkDraw() {
+        return gameBoard.flat().every(cell => cell !== '');
+    }
+
+    function resetBoard() {
+        gameBoard = [
+            ['', '', ''],
+            ['', '', ''],
+            ['', '', '']
+        ];
+        render();
+    }
+
+    function updateScore() {
+        if (currentPlayer === 'X') {
+            playerXScore++;
+            document.getElementById('player-x-score').textContent = playerXScore;
+        } else {
+            playerOScore++;
+            document.getElementById('player-o-score').textContent = playerOScore;
+        }
+    }
+
+    function render() {
+        const cells = document.querySelectorAll('.cell');
+        for (let i = 0; i < cells.length; i++) {
+            const row = Math.floor(i / 3);
+            const col = i % 3;
+            cells[i].textContent = gameBoard[row][col];
+        }
+    }
+    
+</script>
+<li><a href="index.html"> para volta a pagina anterior</a></li>
+</body>
+</html>
